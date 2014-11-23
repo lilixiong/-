@@ -1,2 +1,9 @@
 1、/home/lilixiong/mygithub/featureide_plugins_addon 编译 featureide 所需要第附加插件，拷贝到 eclipse 插件目录下
 2、/home/lilixiong/mygithub/refproject/mogutt 是蘑菇街开源IM的源代码，缺 TTWinClient
+
+
+安装 win7，建议:
+a. 使用 /home/lilixiong/mygithub/install/系统安装/使用老毛桃安装我win7和ubuntu/XTZJ.GHO 进行安装，然后卸载不需要的软件，
+xtzj.gho 基本上是干净的系统，除了 ie 主页被锁之外
+b. 使用 /home/lilixiong/mygithub/install/系统安装/使用老毛桃安装我win7和ubuntu/WINDOWS7.GHO 进行安装，然后卸载不需要的软件，
+windows7.gho 还包括迅雷/QQ等应用，同时 windows7.gho 的主页似乎没有被锁定。
