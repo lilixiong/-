@@ -1,0 +1,126 @@
+在 xp 下安装 jdk 1.4.2，并且 ant 使用 1.8.2 版本，
+再修改 build.bat，加入
+set JAVA_HOME=C:\j2sdk1.4.2_19
+set PATH=C:\Downloads\apache-ant-1.8.2\bin;C:\j2sdk1.4.2_19\bin;c:\itools;%PATH%
+注意，编译过程中需要用到 zip.exe 和 unzip.exe，所以需要 cygwin 来支持。
+
+然后执行 build -os win32 -ws win32 -arch x86。
+
+其他版本好像都不好使。
+
+eclipse 3.3 用 jdk 1.6 编译即可
+
+eclipse 3.4 需要同时使用 jdk1.4/1.5/1.6 来编译，需修改 build.properites 内容如下：
+J2SE-1.4=C:/j2sdk1.4.2_19/jre/lib/rt.jar;C:/j2sdk1.4.2_19/jre/lib/jsse.jar;C:/j2sdk1.4.2_19/jre/lib/jce.jar
+J2SE-1.5=C:/jdk1.5.0_01/jre/lib/rt.jar;C:/jdk1.5.0_01/jre/lib/jsse.jar;C:/jdk1.5.0_01/jre/lib/jce.jar
+JavaSE-1.6=C:/jdk1.6.0_43/jre/lib/rt.jar;C:/jdk1.6.0_43/jre/lib/jsse.jar;C:/jdk1.6.0_43/jre/lib/jce.jar
+
+但是同样的设置编译 eclipse 3.4.2 失败。
+
+同样的设置，编译 eclipse 3.5，有的成功，有的失败，查看编译失败的项目，如 plugins\org.eclipse.osgi，其配置文件 build.properties 内容如下：
+###############################################################################
+# Copyright (c) 2003, 2008 IBM Corporation and others.
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors:
+#     IBM Corporation - initial API and implementation
+###############################################################################
+bin.includes = .options,\
+               .,\
+               about.html,\
+               META-INF/,\
+               systembundle.properties,\
+               *.profile,\
+               profile.list,\
+               hookconfigurators.properties,\
+               about_files/
+src.includes = about.html,\
+               about_files/
+source.. = osgi/src,\
+           core/adaptor/,\
+           core/framework/,\
+           core/composite/,\
+           resolver/src/,\
+           defaultAdaptor/src/,\
+           eclipseAdaptor/src/,\
+           console/src/,\
+           supplement/src/,\
+           security/src/
+output.. = bin/
+jre.compilation.profile = CDC-1.1/Foundation-1.1
+bootClasspath=osgi/exceptions.jar;osgi/xmlParserAPIs.jar;${CDC-1.1/Foundation-1.1}
+
+javacSource=1.3
+javacTarget=1.2
+
+而 eclipse 3.4 的 plugins\org.eclipse.osgi，其配置文件 build.properties 内容如下：
+###############################################################################
+# Copyright (c) 2003, 2006 IBM Corporation and others.
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors:
+#     IBM Corporation - initial API and implementation
+###############################################################################
+bin.includes = .options,\
+               .,\
+               about.html,\
+               META-INF/,\
+               systembundle.properties,\
+               *.profile,\
+               profile.list,\
+               hookconfigurators.properties,\
+               about_files/
+src.includes = about.html,\
+               about_files/
+source.. = osgi/src,\
+           core/adaptor/,\
+           core/framework/,\
+           resolver/src/,\
+           defaultAdaptor/src/,\
+           eclipseAdaptor/src/,\
+           console/src/,\
+           supplement/src/,\
+           jarverifier/,\
+           security/src/
+output.. = bin/
+jre.compilation.profile = J2SE-1.4
+
+可见，eclipse 3.5 使用了 CDC-1.1/Foundation-1.1，而 eclipse 3.4 使用的是 J2SE-1.4
+同样 eclipse 3.4.2 不能编译通过的原因也是这个原因。
+
+修改 build.properties 内容如下：
+J2SE-1.4=C:/j2sdk1.4.2_19/jre/lib/rt.jar;C:/j2sdk1.4.2_19/jre/lib/jsse.jar;C:/j2sdk1.4.2_19/jre/lib/jce.jar
+J2SE-1.5=C:/jdk1.5.0_01/jre/lib/rt.jar;C:/jdk1.5.0_01/jre/lib/jsse.jar;C:/jdk1.5.0_01/jre/lib/jce.jar
+JavaSE-1.6=C:/jdk1.6.0_43/jre/lib/rt.jar;C:/jdk1.6.0_43/jre/lib/jsse.jar;C:/jdk1.6.0_43/jre/lib/jce.jar
+CDC-1.0/Foundation-1.0=C:/jdk1.6.0_43/jre/lib/rt.jar;C:/jdk1.6.0_43/jre/lib/jsse.jar;C:/jdk1.6.0_43/jre/lib/jce.jar
+CDC-1.1/Foundation-1.1=C:/jdk1.6.0_43/jre/lib/rt.jar;C:/jdk1.6.0_43/jre/lib/jsse.jar;C:/jdk1.6.0_43/jre/lib/jce.jar
+
+再编译，提示有两个错误，
+    [javac] 1. ERROR in C:\eclipse-sourceBuild-srcIncluded-3.5\plugins\org.eclip
+se.help.base\src_ant\org\eclipse\help\internal\base\ant\BuildHelpIndex.java (at
+line 17)
+    [javac]     import org.eclipse.ant.core.AntCorePlugin;
+    [javac]            ^^^^^^^^^^^^^^^
+    [javac] The import org.eclipse.ant cannot be resolved
+    [javac] ----------
+    [javac] 2. ERROR in C:\eclipse-sourceBuild-srcIncluded-3.5\plugins\org.eclip
+se.help.base\src_ant\org\eclipse\help\internal\base\ant\BuildHelpIndex.java (at
+line 62)
+    [javac]     .getReferences().get(AntCorePlugin.ECLIPSE_PROGRESS_MONITOR);
+    [javac]                          ^^^^^^^^^^^^^
+    [javac] AntCorePlugin cannot be resolved
+    [javac] ----------
+    [javac] 2 problems (2 errors)
+
+BUILD FAILED
+
+而 org.eclipse.ant.core.AntCorePlugin 则是编译本身的产物，如果再老版本中取得，或许可以让编译成功。
+这可能就是 3.6 以上版本编译过程中需要解压 eclipse-SDK-*.tar.gz 的原因吧
+
+-- eclipse 3.2.2 需要用 C:\jdk1.5.0_01 来编译，但编译失败
