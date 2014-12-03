@@ -124,3 +124,24 @@ BUILD FAILED
 这可能就是 3.6 以上版本编译过程中需要解压 eclipse-SDK-*.tar.gz 的原因吧
 
 -- eclipse 3.2.2 需要用 C:\jdk1.5.0_01 来编译，但编译失败
+
+
+打印 eclipse log：
+运行 eclipsec -debug，然后在 eclipse 所在目录下创建 .options 文件，内容如下：
+org.eclipse.osgi/debug/loader=true
+org.eclipse.osgi/debug/events=true
+
+
+修改 org.eclipse.equinox.internal.p2.repository.CacheManager.java，第 129 行，
+			if (cacheFile != null) {
+				//Lilx
+				System.out.println("--- Lilx: " + cacheFile.getAbsolutePath() + " exist, reuse and skip download. "); //$NON-NLS-1$//$NON-NLS-2$
+
+				lastModified = cacheFile.lastModified();
+				name = cacheFile.getName();
+
+				// Lilx
+				return cacheFile;
+			}
+注意编译结果保存在 /home/lilixiong/tmp/rt.equinox.p2/bundles/org.eclipse.equinox.p2.repository/bin/org/eclipse/equinox/internal/p2/repository 目录下。
+
